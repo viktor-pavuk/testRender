@@ -4,6 +4,7 @@ from fastapi import FastAPI
 from fastapi import HTTPException
 from PyPDF2 import PdfReader
 import pyaztro
+from bs4 import BeautifulSoup
 
 app = FastAPI()
 
@@ -35,10 +36,30 @@ async def extract_text(url: str):
     
 @app.get("/horoskop")
 async def root(sign: str):
-    horoscope = pyaztro.Aztro(sign=sign)
+    signs = {
+        "aries": 1,
+        "taurus": 2,
+        "gemini": 3,
+        "cancer": 4,
+        "leo": 5,
+        "virgo": 6,
+        "libra": 7,
+        "scorpio": 8,
+        "sagittarius": 9,
+        "capricorn": 10,
+        "aquarius": 11,
+        "pisces": 12,
+    }
+    
+    URL = "https://www.horoscope.com/us/horoscopes/general/horoscope-general-daily-today.aspx?sign=" + \
+        str(signs[sign])
+    
+    r = requests.get(URL)
+    soup = BeautifulSoup(r.text, 'html.parser')
+    
+    container = soup.find("p")
+    
+    print()
     return {
-        "description": horoscope.description,
-        "mood": horoscope.mood,
-        "lucky_time": horoscope.lucky_time,
-        "lucky_number": horoscope.lucky_number
+        "text": container.text.strip()
     }
