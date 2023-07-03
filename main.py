@@ -1,9 +1,9 @@
 from typing import Optional
-
 import requests
 from fastapi import FastAPI
 from fastapi import HTTPException
 from PyPDF2 import PdfReader
+import pyaztro
 
 app = FastAPI()
 
@@ -33,6 +33,7 @@ async def extract_text(url: str):
 
     return {'text': text}
     
-@app.get("/")
-async def root():
-    return {"message": "Hello Vasya"}
+@app.get("/horoskop")
+async def root(sign: str):
+    horoscope = pyaztro.Aztro(sign=sign)
+    return {"message": horoscope.description}
