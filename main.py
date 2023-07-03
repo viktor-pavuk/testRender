@@ -3,7 +3,6 @@ import requests
 from fastapi import FastAPI
 from fastapi import HTTPException
 from PyPDF2 import PdfReader
-import pyaztro
 from bs4 import BeautifulSoup
 
 app = FastAPI()
