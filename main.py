@@ -36,4 +36,9 @@ async def extract_text(url: str):
 @app.get("/horoskop")
 async def root(sign: str):
     horoscope = pyaztro.Aztro(sign=sign)
-    return {"message": horoscope.description}
+    return {
+        "description": horoscope.description,
+        "mood": horoscope.mood,
+        "lucky_time": horoscope.lucky_time,
+        "lucky_number": horoscope.lucky_number
+    }
