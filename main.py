@@ -2,6 +2,8 @@ from typing import Optional
 import requests
 from fastapi import FastAPI
 from fastapi import HTTPException
+from fastapi.encoders import jsonable_encoder
+from fastapi.responses import JSONResponse
 
 import numpy as np
 
@@ -116,4 +118,6 @@ class Game:
 @app.post('/spin')
 async def extract_text(bet: int):
     g = Game()
-    return g.spin()
+    spin_result = g.spin()
+    json_compatible_item_data = jsonable_encoder(spin_result)
+    return JSONResponse(content=json_compatible_item_data)
