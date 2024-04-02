@@ -31,7 +31,7 @@ class Game:
         # 'scatter' 'rogach' 'wild'
         self.symbols = [ 'bronze_coin', 'black_coin', 'silver_coin', 'gold_coin', 'bull', 'lion', 'eagle', 'spearman', 'bulavist', 'mechnik']
 
-        self.lines = np.array([[1, 1, 1, 1, 1],
+        self.lines =           [[1, 1, 1, 1, 1],
                                [0, 0, 0, 0, 0],
                                [2, 2, 2, 2, 2],
                                [0, 1, 2, 1, 0],
@@ -50,7 +50,7 @@ class Game:
                                [1, 2, 1, 2, 1],
                                [0, 2, 2, 2, 0],
                                [2, 0, 0, 0, 2],
-                               [2, 2, 0, 2, 2]])
+                               [2, 2, 0, 2, 2]]
     def gen_board(self):
         length = len(self.symbols)
         self.board = np.random.randint(0,length,(3,5))
