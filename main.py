@@ -9,9 +9,9 @@ import numpy as np
 app = FastAPI()
 
 class Game:
-    def __init__(self):
+    def __init__(self, bet: int):
         self.board = np.array([0, 0, 0, 0, 0])
-        self.bet = 20
+        self.bet = bet
         self.level = 1
         self.coin_value = 1
 
@@ -56,7 +56,7 @@ class Game:
         length = len(self.symbols)
         self.board = np.random.randint(0,length,(3,5))
 
-    def print_board(self):
+    def add_wilds(self):
         new_board = []
         for line in self.board:
             new_line = []
@@ -64,11 +64,12 @@ class Game:
                 new_line.append(self.symbols[element])
             new_board.append(new_line)
         self.board = new_board
-        if np.random.rand() < 0.60:
+        if np.random.rand() < 0.50:
           for i in range(np.random.randint(1,4)):
             row = np.random.randint(0,3)
             column = np.random.randint(0,5)
             self.board[row][column] = 'wild'
+        self.board = np.array(self.board)
         print()
         print(np.array(new_board))
 
@@ -103,11 +104,11 @@ class Game:
 
     def spin(self):
         self.gen_board()
-        self.print_board()
+        self.add_wilds()
         spin_result = self.check_lines()
         win = sum(spin_result)
         lines = [(x, self.lines[i]) for i,x in enumerate(spin_result) if x!=0]
-        res = {'Board': self.board,
+        res = {'Board': self.board.tolist(),
                'Lines': lines,
                'Win': win}
         print(res)
