@@ -116,7 +116,7 @@ class Game:
 
 @app.post('/spin')
 async def extract_text(bet: int):
-    g = Game()
+    g = Game(bet)
     spin_result = g.spin()
     res_json = json.dumps(spin_result, indent = 4)
     return Response(content=res_json, media_type="application/json")
