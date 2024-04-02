@@ -84,7 +84,7 @@ class Game:
       line = [x if x != 'wild' else symbol for x in line]
       for i in range(1,5):
         if line[i] != symbol:
-            break
+           break
         counter+=1
         
       return self.values[symbol][counter-1]
