@@ -1,8 +1,7 @@
 import json 
 from typing import Optional
 import requests
-from fastapi import FastAPI
-from fastapi import HTTPException
+from fastapi import FastAPI, Response, HTTPException
 
 import numpy as np
 
