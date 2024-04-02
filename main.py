@@ -4,8 +4,122 @@ from fastapi import FastAPI
 from fastapi import HTTPException
 from PyPDF2 import PdfReader
 from bs4 import BeautifulSoup
+import numpy as np
 
 app = FastAPI()
+
+class Game:
+    def __init__(self):
+        self.board = np.array([0, 0, 0, 0, 0])
+        self.balance = 0
+        self.bet = 20
+        self.level = 1
+        self.coin_value = 1
+
+        self.values = {
+            'scatter' :[0, 0, 0, 0, 0],
+            'rogach' : [0, 0, 0, 0, 0],
+            'bronze_coin' : [0, 0, 4, 10, 30],
+            'black_coin' : [0, 0, 4, 10, 30],
+            'silver_coin' : [0, 0, 4, 10, 30],
+            'gold_coin' : [0, 0, 4, 10, 30],
+            'bull' : [0, 0, 10, 30, 100],
+            'eagle' : [0, 0, 10, 40, 110],
+            'lion' : [0, 0, 10, 50, 120],
+            'spearman' : [0, 0, 40, 100, 1000],
+            'bulavist' : [0, 0, 40, 110, 1100],
+            'mechnik' : [0, 0, 40, 120, 1200],
+        }
+        # 'scatter' 'rogach' 'wild'
+        self.symbols = [ 'bronze_coin', 'black_coin', 'silver_coin', 'gold_coin', 'bull', 'lion', 'eagle', 'spearman', 'bulavist', 'mechnik']
+
+        self.lines = np.array([[1, 1, 1, 1, 1],
+                               [0, 0, 0, 0, 0],
+                               [2, 2, 2, 2, 2],
+                               [0, 1, 2, 1, 0],
+                               [2, 1, 0, 1, 2],
+                               [0, 1, 1, 1, 0],
+                               [2, 1, 1, 1, 2],
+                               [1, 0, 0, 0, 1],
+                               [1, 2, 2, 2, 1],
+                               [1, 1, 0, 1, 1],
+                               [1, 1, 2, 1, 1],
+                               [0, 0, 1, 0, 0],
+                               [2, 2, 1, 2, 2],
+                               [0, 1, 0, 1, 0],
+                               [2, 1, 2, 1, 2],
+                               [1, 0, 1, 0, 1],
+                               [1, 2, 1, 2, 1],
+                               [0, 2, 2, 2, 0],
+                               [2, 0, 0, 0, 2],
+                               [2, 2, 0, 2, 2]])
+    def gen_board(self):
+        length = len(self.symbols)
+        self.board = np.random.randint(0,length,(3,5))
+
+    def print_board(self):
+        new_board = []
+        for line in self.board:
+            new_line = []
+            for element in line:
+                new_line.append(self.symbols[element])
+            new_board.append(new_line)
+        self.board = new_board
+        if np.random.rand() < 0.60:
+          for i in range(np.random.randint(1,4)):
+            row = np.random.randint(0,3)
+            column = np.random.randint(0,5)
+            self.board[row][column] = 'wild'
+        print()
+        print(np.array(new_board))
+
+
+    def print_balance(self):
+        print(self.balance)
+
+    def check_line(self, line):
+      counter = 0
+      symbol = [x for x in line if x != 'wild'][0]
+      if not symbol:
+        symbol = self.symbols[-1]
+      line = [x if x != 'wild' else symbol for x in line]
+      for i in range(1,5):
+        counter+=1
+        if line[i] != symbol:
+          break
+      return self.values[symbol][counter-1]
+
+
+    def check_lines(self):
+      result = []
+      total_win = 0
+      value = 0
+      for line in self.lines:
+        temp_line = []
+        for column, row  in enumerate(line):
+          temp_line.append(self.board[row][column])
+        result.append(self.check_line(temp_line))
+      return result
+
+
+    def spin(self):
+        self.balance -= g.bet*g.level*g.coin_value
+        self.gen_board()
+        self.print_board()
+        spin_result = self.check_lines()
+        win = sum(spin_result)
+        lines = [(x, self.lines[i]) for i,x in enumerate(spin_result) if x!=0]
+        print('Win: ', win)
+        print('Lines: ', lines)
+        self.balance += win
+        print('Balance:', self.balance)
+        return win
+
+
+@app.post('/spin')
+async def extract_text(bet: bet):
+    g = Game()
+    g.spin()
 
 @app.post('/extract_text')
 async def extract_text(url: str):
