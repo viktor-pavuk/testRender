@@ -11,7 +11,6 @@ app = FastAPI()
 class Game:
     def __init__(self):
         self.board = np.array([0, 0, 0, 0, 0])
-        self.balance = 0
         self.bet = 20
         self.level = 1
         self.coin_value = 1
@@ -103,21 +102,20 @@ class Game:
 
 
     def spin(self):
-        self.balance -= g.bet*g.level*g.coin_value
         self.gen_board()
         self.print_board()
         spin_result = self.check_lines()
         win = sum(spin_result)
         lines = [(x, self.lines[i]) for i,x in enumerate(spin_result) if x!=0]
-        print('Win: ', win)
-        print('Lines: ', lines)
-        self.balance += win
-        print('Balance:', self.balance)
-        return win
+        res = {'Board': self.board,
+               'Lines': lines,
+               'Win': win}
+        print(res)
+        return res
 
 
 @app.post('/spin')
-async def extract_text(bet: bet):
+async def extract_text(bet: int):
     g = Game()
     g.spin()
 
